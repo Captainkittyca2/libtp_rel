@@ -179,7 +179,6 @@ namespace libtp::tp::d_a_player
     static_assert(sizeof(daPy_py) == 0x630);
 #endif
 
-
     extern "C"
     {
         extern void* m_midnaActor;
