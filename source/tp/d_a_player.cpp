@@ -12,6 +12,7 @@ void offNoResetFlg0(daPy_py* linkActrPtr, daPy_FLG0 i_flag) {
     linkActrPtr->mNoResetFlg0 &= ~i_flag;
 }
 #endif
+
 void onResetFlg0(daPy_py* linkActrPtr, daPy_RFLG0 i_flag) {
     linkActrPtr->mResetFlg0 |= i_flag;
 }
