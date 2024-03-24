@@ -8,6 +8,7 @@ namespace libtp::tp::d_a_player
 void offNoResetFlg2(daPy_py* linkActrPtr, daPy_FLG2 i_flag) {
     linkActrPtr->mNoResetFlg2 &= ~i_flag;
 }
+
 void offNoResetFlg0(daPy_py* linkActrPtr, daPy_FLG0 i_flag) {
     linkActrPtr->mNoResetFlg0 &= ~i_flag;
 }
