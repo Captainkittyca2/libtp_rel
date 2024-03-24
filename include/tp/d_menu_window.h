@@ -71,7 +71,7 @@ namespace libtp::tp::d_menu_window
         int32_t dMw_Z_TRIGGER();
 
         /**
-         * @brief checks Start button.
+         * @brief checks Start button for GameCube and + button for Wii.
          * 
          * @return Bool returns 1 if Start is pressed. 0 if it's not pressed.
         */
