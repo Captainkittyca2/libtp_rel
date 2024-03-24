@@ -170,7 +170,6 @@ namespace libtp::tp::d_a_player
         RFLG0_UNK_1 = 0x1,
     };
 
-
     static_assert(sizeof(daPy_demo) == 0x24);
     static_assert(sizeof(daPy_actorKeep) == 0x8);
     static_assert(sizeof(daPy_anmHeap) == 0x14);
