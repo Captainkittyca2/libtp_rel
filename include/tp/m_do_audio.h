@@ -24,6 +24,7 @@ namespace libtp::tp::m_Do_Audio
          *  @param i_reverb Unknown.
          */
         void mDoAud_seStartLevel(uint32_t sfxID, const Vec* i_sePos, uint32_t unk5, int8_t i_reverb);
+        void mDoAud_seStart(uint32_t sfxID, const Vec* i_sePos, uint32_t unk5, int8_t i_reverb);
     }
 } // namespace libtp::tp::m_Do_Audio
 #endif
