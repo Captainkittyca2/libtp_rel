@@ -73,7 +73,7 @@ namespace libtp::tp::d_menu_window
         /**
          * @brief checks Start button for GameCube and + button for Wii.
          * 
-         * @return Bool returns 1 if Start is pressed. 0 if it's not pressed.
+         * @return Bool returns 1 if Start/+ is pressed. 0 if it's not pressed.
         */
         int32_t dMw_START_TRIGGER();
     }
