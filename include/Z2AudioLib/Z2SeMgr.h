@@ -65,6 +65,7 @@ namespace libtp::z2audiolib::z2semgr
                                   float f3,
                                   float f4,
                                   uint8_t unk7);
+
         void z2SeMgr_seStart(Z2SeMgr* audioMgr,
                              uint32_t* sfxID,
                              const Vec* unk4,
