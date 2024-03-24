@@ -27,7 +27,7 @@ namespace libtp::tp::m_Do_Audio
         void mDoAud_seStartLevel(uint32_t sfxID, const Vec* i_sePos, uint32_t unk5, int8_t i_reverb);
 
         /**
-         * @brief Plays the specified audio sound effect fully.
+         * @brief WIP
          * 
          *  @param sfxID The ID of the sound effect to be played.
          *  @param i_sePos Unknown.
