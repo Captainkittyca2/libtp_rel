@@ -63,14 +63,24 @@ namespace libtp::tp::d_meter2_draw
         /* 0x178 */ libtp::tp::d_pane_class::CPaneMgr* mpHeartMask[20];
         /* 0x1C8 */ libtp::tp::d_pane_class::CPaneMgr* mpBigHeart; // Big heart that displays highest heart value.
         /* 0x1CC */ libtp::tp::d_pane_class::CPaneMgr* mpMagicParent;
+        #ifdef PLATFORM_WII
+        /* 0x1D0 */ uint8_t unk1[4];
+        #else
         /* 0x1D0 */ libtp::tp::d_pane_class::CPaneMgr* mpMagicBase;
+        #endif
         /* 0x1D4 */ libtp::tp::d_pane_class::CPaneMgr* mpMagicFrameL;
         /* 0x1D8 */ libtp::tp::d_pane_class::CPaneMgr* mpMagicMeter;
         /* 0x1DC */ libtp::tp::d_pane_class::CPaneMgr* mpMagicFrameR;
         /* 0x1E0 */ libtp::tp::d_pane_class::CPaneMgr* mpLightDropParent;
         /* 0x1E4 */ int32_t field_0x1e4;
         /* 0x1E8 */ libtp::tp::d_pane_class::CPaneMgr* mpSIParent[2];
+        #ifdef PLATFORM_WII
+        /* 0x1F0 */ uint8_t unk2[0x22C - 0x1F0];
+        /* 0x22C */ libtp::tp::d_pane_class::CPaneMgr* mpMagicBase;
+        /* 0x230 */ uint8_t unk3[0x2B0 - 0x230];
+        #else
         /* 0x1F0 */ libtp::tp::d_pane_class::CPaneMgr* mpSIParts[16][3];
+        #endif
         /* 0x2B0 */ libtp::tp::d_pane_class::CPaneMgr* mpRupeeKeyParent;
         /* 0x2B4 */ libtp::tp::d_pane_class::CPaneMgr* mpRupeeParent[3];
         /* 0x2C0 */ libtp::tp::d_pane_class::CPaneMgr* mpRupeeTexture[4][2];
@@ -263,6 +273,7 @@ namespace libtp::tp::d_meter2_draw
         /* 0x860 */ uint8_t field_0x860;
         /* 0x861 */ uint8_t field_0x861;
         /* 0x862 */ uint8_t padding[0x2];
+        //void drawKantera(int32_t, int32_t, float, float);
     } __attribute__((__packed__));
 
     extern "C"
@@ -302,6 +313,33 @@ namespace libtp::tp::d_meter2_draw
          * @param dMeterDrawPtr A pointer to the current dMeter2Draw structure
         */
         void setAlphaKanteraAnimeMax(dMeter2Draw_c* dMeterDrawPtr);
+
+        void setAlphaOxygenAnimeMin(dMeter2Draw_c* dMeterDrawPtr);
+
+        void setAlphaOxygenAnimeMax(dMeter2Draw_c* dMeterDrawPtr);
+
+        void setAlphaButtonAnimeMax(dMeter2Draw_c* dMeterDrawPtr);
+
+        void setAlphaButtonCrossAnimeMax(dMeter2Draw_c* dMeterDrawPtr);
+
+        void setButtonIconAlpha(dMeter2Draw_c* dMeterDrawPtr, int32_t a, uint8_t b, uint32_t c, bool d);
+
+        void drawKantera(dMeter2Draw_c* dMeterDrawPtr, int32_t, int32_t, float, float);
+
+        void setItemNum(dMeter2Draw_c* dMeterDrawPtr, uint8_t a, uint8_t b, uint8_t c);
+
+        void drawItemNum(dMeter2Draw_c* dMeterDrawPtr, uint8_t a, float b);
+
+        uint8_t isButtonVisible(dMeter2Draw_c* dMeterDrawPtr);
+
+        char* getActionString(dMeter2Draw_c* dMeterDrawPtr, uint8_t i_action, uint8_t type, uint8_t* param_2);
+
+        void drawButtonR(dMeter2Draw_c* dMeterDrawPtr, uint8_t unk1, uint8_t i_action, bool unk2, bool unk3);
+
+#ifdef PLATFORM_WII
+        void drawButtonNunZ(dMeter2Draw_c* dMeterDrawPtr, uint8_t unk1);
+#endif
+
     }
 } // namespace libtp::tp::d_meter2_draw
 #endif
