@@ -23,9 +23,428 @@
 #include "SSystem/SComponent/c_phase.h"
 #include "tp/J3DModel.h"
 #include "tp/m_do_ext.h"
+#include "tp/d_bg_s_acch.h"
 
 namespace libtp::tp::d_a_alink
 {
+    enum daAlink_ANM {
+        /* 0x000 */ ANM_ATN_RETURN_FROM_WALK,
+        /* 0x001 */ ANM_ATN_RETURN_FROM_RUN,
+        /* 0x002 */ ANM_ATN_BACK_WALK,
+        /* 0x003 */ ANM_ATN_BACK_RUN,
+        /* 0x004 */ ANM_ATN_LOCK_BACK_WALK,
+        /* 0x005 */ ANM_ATN_LOCK_BACK_RUN,
+        /* 0x006 */ ANM_ATN_WALK_LEFT,
+        /* 0x007 */ ANM_ATN_LOCK_WALK_LEFT,
+        /* 0x008 */ ANM_ATN_WALK_RIGHT,
+        /* 0x009 */ ANM_ATN_LOCK_WALK_RIGHT,
+        /* 0x00A */ ANM_ATN_RUN_LEFT,
+        /* 0x00B */ ANM_ATN_LOCK_RUN_LEFT,
+        /* 0x00C */ ANM_ATN_RUN_RIGHT,
+        /* 0x00D */ ANM_ATN_LOCK_RUN_RIGHT,
+        /* 0x00E */ ANM_WALK_HEAVY,
+        /* 0x00F */ ANM_ATN_BACK_WALK_HEAVY,
+        /* 0x010 */ ANM_ATN_WAIT_LEFT,
+        /* 0x011 */ ANM_ATN_WAIT_RIGHT,
+        /* 0x012 */ ANM_WALK,
+        /* 0x013 */ ANM_RUN,
+        /* 0x014 */ ANM_SWIM_WAIT,
+        /* 0x015 */ ANM_STEP_TURN,
+        /* 0x016 */ ANM_SMALL_GUARD,
+        /* 0x017 */ ANM_STEP_TURN_TIRED,
+        /* 0x018 */ ANM_SMALL_GUARD_TIRED,
+        /* 0x019 */ ANM_WAIT,
+        /* 0x01A */ ANM_WAIT_B,
+        /* 0x01B */ ANM_WAIT_B_TO_A,
+        /* 0x01C */ ANM_RUN_B,
+        /* 0x01D */ ANM_SIDE_JUMP_LEFT,
+        /* 0x01E */ ANM_SIDE_JUMP_RIGHT,
+        /* 0x01F */ ANM_SIDE_JUMP_LEFT_LAND,
+        /* 0x020 */ ANM_SIDE_JUMP_RIGHT_LAND,
+        /* 0x021 */ ANM_BACK_JUMP,
+        /* 0x022 */ ANM_BACK_JUMP_LAND,
+        /* 0x023 */ ANM_FRONT_ROLL,
+        /* 0x024 */ ANM_ROLL_CRASH,
+        /* 0x025 */ ANM_BARRIER_RECOIL,  // ?
+        /* 0x026 */ ANM_BACKFLIP,
+        /* 0x027 */ ANM_BACKFLIP_LAND,
+        /* 0x028 */ ANM_SLIP,
+        /* 0x029 */ ANM_CROUCH,
+        /* 0x02A */ ANM_CROUCH_START,
+        /* 0x02B */ ANM_GUARD_LEFT,
+        /* 0x02C */ ANM_GUARD_RIGHT,
+        /* 0x02D */ ANM_CROUCH_DEF,  // ?
+        /* 0x02E */ ANM_SHIELD_ATTACK,
+        /* 0x02F */ ANM_SHIELD_ATTACK_RECOIL,
+        /* 0x030 */ ANM_GUARD_BREAK,
+        /* 0x031 */ ANM_JUMP_START,
+        /* 0x032 */ ANM_JUMP,
+        /* 0x033 */ ANM_JUMP_LAND,
+        /* 0x034 */ ANM_CRAWL_START,
+        /* 0x035 */ ANM_CRAWL,
+        /* 0x036 */ ANM_WAIT_PUSH_PULL,
+        /* 0x037 */ ANM_PUSH_LIGHT,
+        /* 0x038 */ ANM_PUSH_START,
+        /* 0x039 */ ANM_PUSH,
+        /* 0x03A */ ANM_PULL_LIGHT,
+        /* 0x03B */ ANM_PULL_START,
+        /* 0x03C */ ANM_PULL,
+        /* 0x03D */ ANM_HORSE_MOUNT_LEFT,
+        /* 0x03E */ ANM_HORSE_MOUNT_RIGHT,
+        /* 0x03F */ ANM_HORSE_MOUNT_BACK,
+        /* 0x040 */ ANM_HORSE_GETOFF_LEFT,
+        /* 0x041 */ ANM_HORSE_GETOFF_RIGHT,
+        /* 0x042 */ ANM_HORSE_STOP,
+        /* 0x043 */ ANM_HORSE_STOP_TO_STAND,
+        /* 0x044 */ ANM_HORSE_STAND,
+        /* 0x045 */ ANM_HORSE_JUMP_START,
+        /* 0x046 */ ANM_HORSE_JUMP,
+        /* 0x047 */ ANM_HORSE_JUMP_LAND,
+        /* 0x048 */ ANM_HORSE_WAIT,
+        /* 0x049 */ ANM_HORSE_WALK_A,
+        /* 0x04A */ ANM_HORSE_WALK_B,
+        /* 0x04B */ ANM_HORSE_DASH_A,
+        /* 0x04C */ ANM_HORSE_DASH_B,
+        /* 0x04D */ ANM_WSTARTH,  // ?
+        /* 0x04E */ ANM_HORSE_DASH_START,
+        /* 0x04F */ ANM_HORSE_LASH,
+        /* 0x050 */ ANM_HORSE_CUT_TURN,
+        /* 0x051 */ ANM_HORSE_WAIT_A,
+        /* 0x052 */ ANM_HORSE_WAIT_B,
+        /* 0x053 */ ANM_HORSE_DIE_RECOVER,
+        /* 0x054 */ ANM_HORSE_TURN_B,
+        /* 0x055 */ ANM_HORSE_CROUCH,
+        /* 0x056 */ ANM_HORSE_DMG_LEFT,
+        /* 0x057 */ ANM_HORSE_DMG_RIGHT,
+        /* 0x058 */ ANM_HORSE_HANG_LEFT,
+        /* 0x059 */ ANM_HORSE_HANG_RIGHT,
+        /* 0x05A */ ANM_HORSE_TURN_LEFT,
+        /* 0x05B */ ANM_HORSE_TURN_RIGHT,
+        /* 0x05C */ ANM_HORSE_RIDE_LEFT,
+        /* 0x05D */ ANM_HORSE_RIDE_RIGHT,
+        /* 0x05E */ ANM_HORSE_FALL_LEFT,
+        /* 0x05F */ ANM_HORSE_FALL_RIGHT,
+        /* 0x060 */ ANM_HORSE_TAME_WAIT_B,
+        /* 0x061 */ ANM_HORSE_TAME_WAIT_A_TO_B,
+        /* 0x062 */ ANM_CUT_NM_VERTICAL,
+        /* 0x063 */ ANM_CUT_NM_LEFT,
+        /* 0x064 */ ANM_CUT_NM_RIGHT,
+        /* 0x065 */ ANM_CUT_COMBO_STAB,
+        /* 0x066 */ ANM_CUT_NM_STAB,
+        /* 0x067 */ ANM_CUT_FINISH_LEFT,
+        /* 0x068 */ ANM_CUT_FINISH_VERTICAL,
+        /* 0x069 */ ANM_CUT_FINISH_STAB,
+        /* 0x06A */ ANM_CUT_MORTAL_DRAW_A,
+        /* 0x06B */ ANM_CUT_MORTAL_DRAW_B,
+        /* 0x06C */ ANM_CUT_FINISH_RIGHT,
+        /* 0x06D */ ANM_CUT_TWIRL,
+        /* 0x06E */ ANM_CUT_TWIRL_LAND,
+        /* 0x06F */ ANM_CUT_RECOIL_A,
+        /* 0x070 */ ANM_CUT_RECOIL_B,
+        /* 0x071 */ ANM_CUT_JUMP,
+        /* 0x072 */ ANM_CUT_JUMP_LAND,
+        /* 0x073 */ ANM_CUT_TURN_LEFT,
+        /* 0x074 */ ANM_CUT_TURN_RIGHT,
+        /* 0x075 */ ANM_CUT_TURN_CHARGE_START,
+        /* 0x076 */ ANM_CUT_TURN_CHARGE,
+        /* 0x077 */ ANM_CUT_TURN_CHARGE_MOVE,
+        /* 0x078 */ ANM_CUT_FINISHING_BLOW_JUMP,
+        /* 0x079 */ ANM_CUT_FINISHING_BLOW_FALL,
+        /* 0x07A */ ANM_CUT_FINISHING_BLOW_STAB,
+        /* 0x07B */ ANM_CUT_FINISHING_BLOW_MISS,
+        /* 0x07C */ ANM_CUT_HEAD_JUMP,
+        /* 0x07D */ ANM_CUT_HEAD,
+        /* 0x07E */ ANM_CUT_HEAD_LAND,
+        /* 0x07F */ ANM_DMG_SMALL_A,
+        /* 0x080 */ ANM_DMG_SMALL_B,
+        /* 0x081 */ ANM_DMG_SMALL_LEFT,
+        /* 0x082 */ ANM_DMG_SMALL_RIGHT,
+        /* 0x083 */ ANM_DMG_AIR_FRONT,
+        /* 0x084 */ ANM_DMG_LARGE,
+        /* 0x085 */ ANM_DMG_AIR_LEFT,
+        /* 0x086 */ ANM_DMG_AIR_RIGHT,
+        /* 0x087 */ ANM_DMG_AIR_LAND,
+        /* 0x088 */ ANM_DMG_LARGE_LAND,
+        /* 0x089 */ ANM_DMG_AIR_LEFT_LAND,
+        /* 0x08A */ ANM_DMG_AIR_RIGHT_LAND,
+        /* 0x08B */ ANM_DMG,
+        /* 0x08C */ ANM_DMG_FALL,
+        /* 0x08D */ ANM_DMG_FALL_RECOVER,
+        /* 0x08E */ ANM_FINISH,
+        /* 0x08F */ ANM_FINISH_END,
+        /* 0x090 */ ANM_SERVICE_WAIT,
+        /* 0x091 */ ANM_CLIMB_JUMP,
+        /* 0x092 */ ANM_HANG_READY,
+        /* 0x093 */ ANM_CLIMB_TOP_SMALL,
+        /* 0x094 */ ANM_HANG_CLIMB_TOP,
+        /* 0x095 */ ANM_HANG_ONE_HAND,
+        /* 0x096 */ ANM_HANG_ONE_HAND_MOVE,
+        /* 0x097 */ ANM_HANG_MOVE_LEFT,
+        /* 0x098 */ ANM_HANG_MOVE_RIGHT,
+        /* 0x099 */ ANM_LADDER_UP_START,
+        /* 0x09A */ ANM_LADDER_UP_END_LEFT,
+        /* 0x09B */ ANM_LADDER_UP_END_RIGHT,
+        /* 0x09C */ ANM_LADDER_DOWN_START,
+        /* 0x09D */ ANM_LADDER_DOWN_END_LEFT,
+        /* 0x09E */ ANM_LADDER_DOWN_END_RIGHT,
+        /* 0x09F */ ANM_LADDER_RIGHT_TO_LEFT,
+        /* 0x0A0 */ ANM_LADDER_LEFT_TO_RIGHT,
+        /* 0x0A1 */ ANM_CLIMB_HANG,
+        /* 0x0A2 */ ANM_CLIMB_START,
+        /* 0x0A3 */ ANM_CLIMB_LEFT,
+        /* 0x0A4 */ ANM_CLIMB_RIGHT,
+        /* 0x0A5 */ ANM_CLIMB_SLIDE_LEFT,
+        /* 0x0A6 */ ANM_CLIMB_SLIDE_RIGHT,
+        /* 0x0A7 */ ANM_CLIMB_HANG_MISS,
+        /* 0x0A8 */ ANM_ROOF_UP,
+        /* 0x0A9 */ ANM_ROOF_HANG_WAIT,
+        /* 0x0AA */ ANM_ROOF_HANG_MOVE,
+        /* 0x0AB */ ANM_ROOF_HANG_LEFT,
+        /* 0x0AC */ ANM_ROOF_HANG_RIGHT,
+        /* 0x0AD */ ANM_ROOF_HANG_TURN,
+        /* 0x0AE */ ANM_ROOF_HANG,
+        /* 0x0AF */ ANM_GRAB_UP_START,
+        /* 0x0B0 */ ANM_GRAB_UP,
+        /* 0x0B1 */ ANM_THROW,
+        /* 0x0B2 */ ANM_THROW_HEAVY,
+        /* 0x0B3 */ ANM_PICK_UP_LARGE_START,
+        /* 0x0B4 */ ANM_PICK_UP_LARGE,
+        /* 0x0B5 */ ANM_CARRY,
+        /* 0x0B6 */ ANM_WAIT_TIRED,
+        /* 0x0B7 */ ANM_WAIT_TO_TIRED,
+        /* 0x0B8 */ ANM_TALK,
+        /* 0x0B9 */ ANM_WAIT_START,
+        /* 0x0BA */ ANM_FROZEN_FREE,  // ?
+        /* 0x0BB */ ANM_BOOMERANG_CATCH,
+        /* 0x0BC */ ANM_WALK_SLOPE,
+        /* 0x0BD */ ANM_SLIDE_FORWARD,
+        /* 0x0BE */ ANM_SLIDE_BACKWARD,
+        /* 0x0BF */ ANM_SLIDE_FORWARD_END,
+        /* 0x0C0 */ ANM_SLIDE_BACKWARD_END,
+        /* 0x0C1 */ ANM_SWIM_A,
+        /* 0x0C2 */ ANM_SWIM_RESURFACE,
+        /* 0x0C3 */ ANM_ATN_SWIM_LEFT,
+        /* 0x0C4 */ ANM_ATN_SWIM_RIGHT,
+        /* 0x0C5 */ ANM_ATN_SWIM_BACK,
+        /* 0x0C6 */ ANM_SWIM_DASH,
+        /* 0x0C7 */ ANM_SWIM_DIVE,
+        /* 0x0C8 */ ANM_SWIM_ZORA_START,
+        /* 0x0C9 */ ANM_SWIM_C,
+        /* 0x0CA */ ANM_SWIM_DMG_FRONT,
+        /* 0x0CB */ ANM_SWIM_DMG_BACK,
+        /* 0x0CC */ ANM_SWIM_DMG_LEFT,
+        /* 0x0CD */ ANM_SWIM_DMG_RIGHT,
+        /* 0x0CE */ ANM_SWIM_DMG_FREEZE,
+        /* 0x0CF */ ANM_TRES_OPEN_SMALL,
+        /* 0x0D0 */ ANM_TRES_OPEN_KICK,
+        /* 0x0D1 */ ANM_TRES_OPEN_BIG,
+        /* 0x0D2 */ ANM_GET_A,
+        /* 0x0D3 */ ANM_GET_A_WAIT,
+        /* 0x0D4 */ ANM_GET_A_WAIT2,  // same under anm, upper anm (0x26A)
+        /* 0x0D5 */ ANM_GET_HOLDOUT,
+        /* 0x0D6 */ ANM_TURN_BACK,
+        /* 0x0D7 */ ANM_VJUMP_START,
+        /* 0x0D8 */ ANM_WAIT_SIT,
+        /* 0x0D9 */ ANM_WAIT_CANOE_LEFT,
+        /* 0x0DA */ ANM_WAIT_CANOE_RIGHT,
+        /* 0x0DB */ ANM_CANOE_ROW_LEFT,
+        /* 0x0DC */ ANM_CANOE_ROW_RIGHT,
+        /* 0x0DD */ ANM_CANOE_ROW_LEFT_BACK,
+        /* 0x0DE */ ANM_CANOE_ROW_RIGHT_BACK,
+        /* 0x0DF */ ANM_CANOE_CHANGE_HAND,
+        /* 0x0E0 */ ANM_CANOE_FISH_LEFT,
+        /* 0x0E1 */ ANM_CANOE_FISH_RIGHT,
+        /* 0x0E2 */ ANM_CANOE_REEL,
+        /* 0x0E3 */ ANM_CANOE_RELEASE,
+        /* 0x0E4 */ ANM_CANOE_PADDLE_TO_ROD,
+        /* 0x0E5 */ ANM_REEL,
+        /* 0x0E6 */ ANM_REEL_LEFT_RIGHT,
+        /* 0x0E7 */ ANM_LAND_UP,  // ?
+        /* 0x0E8 */ ANM_DOOR_OPEN_LEFT,
+        /* 0x0E9 */ ANM_DOOR_OPEN_RIGHT,
+        /* 0x0EA */ ANM_DOOR_OPEN_LOCK_LEFT,
+        /* 0x0EB */ ANM_DOOR_OPEN_LOCK_RIGHT,
+        /* 0x0EC */ ANM_DOOR_OPEN_ROLL,
+        /* 0x0ED */ ANM_DOOR_OPEN_SLIDE,
+        /* 0x0EE */ ANM_PICK_UP,
+        /* 0x0EF */ ANM_ROLL_JUMP,
+        /* 0x0F0 */ ANM_SIDE_ROLL_LEFT,
+        /* 0x0F1 */ ANM_SIDE_ROLL_RIGHT,
+        /* 0x0F2 */ ANM_RIDE_WAIT,
+        /* 0x0F3 */ ANM_RIDE_FRONT,
+        /* 0x0F4 */ ANM_RIDE_CROUCH,
+        /* 0x0F5 */ ANM_RIDE_STOP,
+        /* 0x0F6 */ ANM_RIDE_JUMP_START,
+        /* 0x0F7 */ ANM_RIDE_JUMP,
+        /* 0x0F8 */ ANM_RIDE_JUMP_LAND,
+        /* 0x0F9 */ ANM_RIDE_KICK,
+        /* 0x0FA */ ANM_RIDE_CUT_TURN_CHARGE,
+        /* 0x0FB */ ANM_RIDE_CUT_TURN,
+        /* 0x0FC */ ANM_ROPE_SWING,  // monkey swing?
+        /* 0x0FD */ ANM_TRANSFORM_TO_WOLF,
+        /* 0x0FE */ ANM_TRANSFORM_TO_HUMAN,
+        /* 0x0FF */ ANM_WAIT_WIND,
+        /* 0x100 */ ANM_BOTTLE_DRINK_START,
+        /* 0x101 */ ANM_BOTTLE_DRINK,
+        /* 0x102 */ ANM_BOTTLE_DRINK_END,
+        /* 0x103 */ ANM_BOTTLE_DRINK_NASTY,
+        /* 0x104 */ ANM_BOTTLE_OPEN,
+        /* 0x105 */ ANM_BOTTLE_POUR,
+        /* 0x106 */ ANM_BOTTLE_FAIRY,
+        /* 0x107 */ ANM_BOTTLE_SWING,
+        /* 0x108 */ ANM_BOTTLE_SWING_DOWN,
+        /* 0x109 */ ANM_BOTTLE_GET,
+        /* 0x10A */ ANM_BOTTLE_SCOOP,
+        /* 0x10B */ ANM_LANTERN_SWING,
+        /* 0x10C */ ANM_OIL_BOTTLE_POUR_START,
+        /* 0x10D */ ANM_OIL_BOTTLE_POUR,
+        /* 0x10E */ ANM_OIL_BOTTLE_POUR_END,
+        /* 0x10F */ ANM_GRASS_WHISTLE_START,
+        /* 0x110 */ ANM_GRASS_WHISTLE_PLAY,
+        /* 0x111 */ ANM_HAWK_CATCH,
+        /* 0x112 */ ANM_HAWK_WAIT,
+        /* 0x113 */ ANM_WAIT_D_B,        // ghost rats?
+        /* 0x114 */ ANM_HORSE_WAIT_D_B,  // ?
+        /* 0x115 */ ANM_MG_KICK,         // ?
+        /* 0x116 */ ANM_DIE,
+        /* 0x117 */ ANM_HORSE_DIE,
+        /* 0x118 */ ANM_SWIM_DIE,
+        /* 0x119 */ ANM_SWIM_DROWN,
+        /* 0x11A */ ANM_ATN_COW,
+        /* 0x11B */ ANM_COW_CATCH_START,
+        /* 0x11C */ ANM_COW_CATCH,
+        /* 0x11D */ ANM_COW_A_D,  // ?
+        /* 0x11E */ ANM_COW_PRESS,
+        /* 0x11F */ ANM_COW_THROW_LEFT,
+        /* 0x120 */ ANM_COW_THROW_RIGHT,
+        /* 0x121 */ ANM_ATN_RIGHT,
+        /* 0x122 */ ANM_COW_MOVE_LEFT_RIGHT,
+        /* 0x123 */ ANM_COW_STROKE,
+        /* 0x124 */ ANM_ENTRANCE,
+        /* 0x125 */ ANM_FALL,
+        /* 0x126 */ ANM_APPEARANCE,
+        /* 0x127 */ ANM_S_JUMP_START,  // ?
+        /* 0x128 */ ANM_S_JUMP_END,    // ?
+        /* 0x129 */ ANM_HOOKSHOT_FLY_LEFT,
+        /* 0x12A */ ANM_HOOKSHOT_FLY_RIGHT,
+        /* 0x12B */ ANM_HOOKSHOT_SHOOT,
+        /* 0x12C */ ANM_HOOKSHOT_HANG_END_LEFT,
+        /* 0x12D */ ANM_HOOKSHOT_HANG_END_RIGHT,
+        /* 0x12E */ ANM_HOOKSHOT_HANG_LEFT,
+        /* 0x12F */ ANM_HOOKSHOT_HANG_RIGHT,
+        /* 0x130 */ ANM_HOOKSHOT_HANG_WAIT_LEFT,
+        /* 0x131 */ ANM_HOOKSHOT_HANG_WAIT_RIGHT,
+        /* 0x132 */ ANM_HOOKSHOT_HANG_SHOOT_LEFT,
+        /* 0x133 */ ANM_HOOKSHOT_HANG_SHOOT_RIGHT,
+        /* 0x134 */ ANM_HOOKSHOT_HANG_LEFT_START,
+        /* 0x135 */ ANM_HOOKSHOT_HANG_RIGHT_START,
+        /* 0x136 */ ANM_HOOKSHOT_WALL_END_LEFT,
+        /* 0x137 */ ANM_HOOKSHOT_WALL_END_RIGHT,
+        /* 0x138 */ ANM_HOOKSHOT_WALL_LEFT,
+        /* 0x139 */ ANM_HOOKSHOT_WALL_RIGHT,
+        /* 0x13A */ ANM_HOOKSHOT_WALL_WAIT_LEFT,
+        /* 0x13B */ ANM_HOOKSHOT_WALL_WAIT_RIGHT,
+        /* 0x13C */ ANM_HOOKSHOT_WALL_SHOOT_LEFT,
+        /* 0x13D */ ANM_HOOKSHOT_WALL_SHOOT_RIGHT,
+        /* 0x13E */ ANM_HVY_BOOTS_PUT_ON,
+        /* 0x13F */ ANM_SUMOU_MIAU,     // ?
+        /* 0x140 */ ANM_SUMOU_HAKEYOI,  // ?
+        /* 0x141 */ ANM_SUMOU_FIGHT_WAIT,
+        /* 0x142 */ ANM_SUMOU_FIGHT_STEP_LEFT,
+        /* 0x143 */ ANM_SUMOU_FIGHT_STEP_RIGHT,
+        /* 0x144 */ ANM_SUMOU_FIGHT_STEP,
+        /* 0x145 */ ANM_SUMOU_TACKLE,
+        /* 0x146 */ ANM_SUMOU_TACKLE_GORON,  // ?
+        /* 0x147 */ ANM_SUMOU_DODGE_TACKLE,
+        /* 0x148 */ ANM_SUMOU_TACKLE_MISS,
+        /* 0x149 */ ANM_SUMOU_TACKLE_SHOCK,
+        /* 0x14A */ ANM_SUMOU_TACKLE_WAIT,
+        /* 0x14B */ ANM_SUMOU_TACKLE_WAIT_GORON,  // ?
+        /* 0x14C */ ANM_SUMOU_TACKLE_STAGGER,
+        /* 0x14D */ ANM_SUMOU_TACKLE_STAGGER_GORON,  // ?
+        /* 0x14E */ ANM_SUMOU_TACKLE_SHOCK_RETURN,
+        /* 0x14F */ ANM_SUMOU_PUNCH,
+        /* 0x150 */ ANM_SUMOU_PUNCH_MISS_SHOCK,
+        /* 0x151 */ ANM_SUMOU_PUNCH_MISS_SHOCK_RETURN,
+        /* 0x152 */ ANM_SUMOU_PUNCH_SHOCK,
+        /* 0x153 */ ANM_SUMOU_STAGGER,
+        /* 0x154 */ ANM_SUMOU_PUSH_BACK,
+        /* 0x155 */ ANM_SUMOU_PULL_BACK,
+        /* 0x156 */ ANM_SUMOU_PULL_BACK_GORON,  // ?
+        /* 0x157 */ ANM_SUMOU_WIN,
+        /* 0x158 */ ANM_SUMOU_WIN_GORON,
+        /* 0x159 */ ANM_SUMOU_LOSE,
+        /* 0x15A */ ANM_SUMOU_LOSE_GORON,
+        /* 0x15B */ ANM_SUMOU_KNOCKED_DOWN,
+        /* 0x15C */ ANM_SUMOU_GET_UP,
+        /* 0x15D */ ANM_SUMOU_SHIKO,
+        /* 0x15E */ ANM_SUMOU_SHIKO_WAIT,
+        /* 0x15F */ ANM_DMG_FBW,  // ?
+        /* 0x160 */ ANM_IRONBALL_WAIT,
+        /* 0x161 */ ANM_IRONBALL_WALK,
+        /* 0x162 */ ANM_IRONBALL_ATTACK,
+        /* 0x163 */ ANM_IRONBALL_TURN,
+        /* 0x164 */ ANM_IRONBALL_THROW,
+        /* 0x165 */ ANM_IRONBALL_PULL,
+        /* 0x166 */ ANM_IRONBALL_CATCH,
+        /* 0x167 */ ANM_IRONBALL_DEF,
+        /* 0x168 */ ANM_MORPHEEL_HANG,
+        /* 0x169 */ ANM_MORPHEEL_HANG_MISS,
+        /* 0x16A */ ANM_MORPHEEL_HANG_WAIT,
+        /* 0x16B */ ANM_MORPHEEL_HANG_WAIT_B,
+        /* 0x16C */ ANM_MORPHEEL_CUT,
+        /* 0x16D */ ANM_MORPHEEL_CUT_B,  // final hit of cycles 1 and 2
+        /* 0x16E */ ANM_MORPHEEL_CUT_FINAL,
+        /* 0x16F */ ANM_MORPHEEL_SPIT_OUT,
+        /* 0x170 */ ANM_DRAGON_HANG_LEFT,
+        /* 0x171 */ ANM_DRAGON_HANG_RIGHT,
+        /* 0x172 */ ANM_DRAGON_HANG,
+        /* 0x173 */ ANM_DRAGON_HANG_WAIT,
+        /* 0x174 */ ANM_DRAGON_HANG_WAIT_B,
+        /* 0x175 */ ANM_DRAGON_CUT,
+        /* 0x176 */ ANM_DRAGON_CUT_B,  // final hit of cycles 1 and 2
+        /* 0x177 */ ANM_DRAGON_CUT_FINAL,
+        /* 0x178 */ ANM_COPYROD_SWING,
+        /* 0x179 */ ANM_COPYROD_SWING_LARGE,
+        /* 0x17A */ ANM_GET_MASTER_SWORD,  // ?
+        /* 0x17B */ ANM_WAIT_F,
+        /* 0x17C */ ANM_ELEC_STUN_GND,
+        /* 0x17D */ ANM_ELEC_STUN_AIR,
+        /* 0x17E */ ANM_KEY_CATCH,
+        /* 0x17F */ ANM_HORSE_GET_ITEM,
+        /* 0x180 */ ANM_TWGATE_PULLED_IN,
+        /* 0x181 */ ANM_CHAIN_PICK_UP,
+        /* 0x182 */ ANM_CHAIN_PULL,
+        /* 0x183 */ ANM_CHAIN_PULL_FYRUS,
+        /* 0x184 */ ANM_CHAIN_PULL_END,
+        /* 0x185 */ ANM_WAIT_INSECT,
+        /* 0x186 */ ANM_DEMO_MHOP,  // ?
+        /* 0x187 */ ANM_PULL_IRONBALL_SWITCH,
+        /* 0x188 */ ANM_TRADE_ITEM_PULL_OUT,
+        /* 0x189 */ ANM_TRADE_ITEM_WAIT,
+        /* 0x18A */ ANM_DEMO_KAMAE,  // ?
+        /* 0x18B */ ANM_CUT_JUMP_LARGE_CHARGE,
+        /* 0x18C */ ANM_CUT_JUMP_LARGE_START,
+        /* 0x18D */ ANM_CUT_JUMP_LARGE,
+        /* 0x18E */ ANM_CUT_JUMP_LARGE_LAND,
+        /* 0x18F */ ANM_DEMO_MASTER_SWORD_STICK,
+        /* 0x190 */ ANM_DEMO_MASTER_SWORD_WAIT,
+        /* 0x191 */ ANM_DEMO_MASTER_SWORD_PULL,
+        /* 0x192 */ ANM_GANON_CHANCE,
+        /* 0x193 */ ANM_GANON_CHANCE_LOSING,
+        /* 0x194 */ ANM_GANON_CHANCE_WINNING,
+        /* 0x195 */ ANM_GANON_CHANCE_WIN,
+        /* 0x196 */ ANM_GANON_CHANCE_LOSE,
+        /* 0x197 */ ANM_GANON_FINISH,
+        /* 0x198 */ ANM_GANON_FINISH_WAIT,
+        /* 0x199 */ ANM_GANON_ON_HORSE,
+        /* 0x19A */ ANM_DIVE_START,
+        /* 0x19B */ ANM_DIVE,
+        /* 0x19C */ ANM_ODOROKU,   // ?
+        /* 0x19D */ ANM_ASHIMOTO,  // ?
+        /* 0x19E */ ANM_MAX,
+    };
+
     enum daAlink_PROC
     {
         /* 0x000 */ PROC_PREACTION_UNEQUIP,
@@ -394,6 +813,21 @@ namespace libtp::tp::d_a_alink
         /* 0x74 */ uint8_t field_0x74[0x30]; // Mtx
     } __attribute__((__packed__));
 
+    struct daAlink_BckData
+    {
+        /* 0x0 */ uint16_t m_underID;
+        /* 0x2 */ uint16_t m_upperID;
+    } __attribute__((__packed__));
+
+    struct daAlink_AnmData {
+        /* 0x0 */ daAlink_BckData field_0x0;
+        /* 0x4 */ uint8_t field_0x4;
+        /* 0x5 */ uint8_t field_0x5;
+        /* 0x6 */ uint16_t m_faceTexID;
+        /* 0x8 */ uint16_t m_faceBckID;
+        /* 0xA */ uint16_t field_0xa;
+    } __attribute__((__packed__));
+
     struct daAlink: libtp::tp::d_a_player::daPy_py
     {
         /* 0x0062C */ request_of_phase_process_class mPhaseReq;
@@ -490,7 +924,7 @@ namespace libtp::tp::d_a_alink
         /* 0x0173C */ uint8_t field_0x173c[0x3C];     // related to ball and chain - dCcD_Stts
         /* 0x01778 */ uint8_t field_0x1778[0x138];    // dCcD_Sph
         /* 0x018B0 */ uint8_t field_0x18B0[0xC0];     // dBgS_AcchCir field_0x18B0[3];
-        /* 0x01970 */ uint8_t mLinkAcch[0x1D8];       // dBgS_LinkAcch
+        /* 0x01970 */ d_bg_s_acch::dBgS_Acch mLinkAcch;       // dBgS_LinkAcch
         /* 0x01B48 */ uint8_t mLinkLinChk[0x70];      // dBgS_LinkLinChk
         /* 0x01BB8 */ uint8_t mRopeLinChk[0x70];      // dBgS_RopeLinChk
         /* 0x01C28 */ uint8_t mBoomerangLinChk[0x70]; // dBgS_BoomerangLinChk
@@ -1050,13 +1484,91 @@ namespace libtp::tp::d_a_alink
 
     struct daAlinkHIO_anm_c
     {
-        /* 0x00 */ int16_t field_0x00; // end f?
+        /* 0x00 */ int16_t mEndFrame;
         /* 0x02 */ uint16_t padding_0x02;
-        /* 0x04 */ float field_0x04; // speed?
-        /* 0x08 */ float field_0x08; // start?
-        /* 0x0C */ float field_0x0c; // interpolation?
-        /* 0x10 */ float field_0x10; // CF?
+        /* 0x04 */ float mSpeed;
+        /* 0x08 */ float mStartFrame;
+        /* 0x0C */ float mInterpolation;
+        /* 0x10 */ float mCheckFrame;
     } __attribute__((__packed__));   // size = 0x14
+
+    struct daAlinkHIO_basic_c1
+    {
+        /* 0x00 */ bool mOneHitKill;
+        /* 0x01 */ uint8_t padding_0x01;
+        /* 0x02 */ int16_t mNeckMaxHorizontal;
+        /* 0x04 */ int16_t mNeckMaxUp;
+        /* 0x06 */ int16_t mNeckMaxDown;
+        /* 0x08 */ int16_t field_0x08;
+        /* 0x0A */ int16_t mHotspringRecoverTime;
+        /* 0x0C */ int16_t mWiiCamSpeedV;
+        /* 0x0E */ int16_t mWiiCamSpeedH;
+        /* 0x10 */ int16_t mTransformBlockFarAngle;
+        /* 0x12 */ uint16_t padding_0x12;
+        /* 0x14 */ float field_0x14;
+        /* 0x18 */ float mAnmBlendFactor;
+        /* 0x1C */ float mWaitTurnSpeed;
+        /* 0x20 */ float mStandDefenseBlend;
+        /* 0x24 */ float mWaterSurfaceEffectHeight;
+        /* 0x28 */ float mWolfWaterSurfaceEffectHeight;
+        /* 0x2C */ float mMaxWindInfluenceDist;
+        /* 0x30 */ float mNoWindInfluenceDist;
+        /* 0x34 */ float mMaxWindSpeed;
+        /* 0x38 */ float mLavaDeathDepth;
+        /* 0x3C */ float mLinkWolfTransformSpeed;
+        /* 0x40 */ float mWolfLinkTransformSpeed;
+        /* 0x44 */ float mIndoorSpeedFactor;
+        /* 0x48 */ float mSandSinkSpeed;
+        /* 0x4C */ float mSandSurfaceSpeed;
+        /* 0x50 */ float mTransformBlockNearDis;
+        /* 0x54 */ float mTransformBlockFarDis;
+    } __attribute__((__packed__));
+
+    class daAlinkHIO_basic_c0
+    {
+        public:
+        daAlinkHIO_basic_c1 const m;
+    } __attribute__((__packed__));
+
+    struct daAlinkHIO_autoJump_c1
+    {
+        /* 0x00 */ daAlinkHIO_anm_c mJumpAnm;
+        /* 0x14 */ daAlinkHIO_anm_c mLandAnm;
+        /* 0x28 */ daAlinkHIO_anm_c mDiveAnm;
+        /* 0x3C */ daAlinkHIO_anm_c mDiveConnectAnm;
+        /* 0x50 */ bool mAlwaysMaxSpeedJump;
+        /* 0x52 */ int16_t mJumpAngle;
+        /* 0x54 */ int16_t mSpinJumpRotateSpeed;
+        /* 0x56 */ int16_t mSpinJumpLandStopTime;
+        /* 0x58 */ int16_t mCuccoJumpAngle;
+        /* 0x5C */ float mJumpSpeedLimit;
+        /* 0x60 */ float mMinJumpSpeed;
+        /* 0x64 */ float mJumpSpeedRate;
+        /* 0x68 */ float mAirborneInterpolation;
+        /* 0x6C */ float mJumpFallInterpolation;
+        /* 0x70 */ float mFallInterpolation;
+        /* 0x74 */ float mGravity;
+        /* 0x78 */ float mMaxFallSpeed;
+        /* 0x7C */ float mMaxJumpSpeed;
+        /* 0x80 */ float mSpinJumpInterpolation;
+        /* 0x84 */ float mSpinJumpFallInterpolation;
+        /* 0x88 */ float mSpinJumpAddSpeed;
+        /* 0x8C */ float mSpinJumpAccel;
+        /* 0x90 */ float mHangHeightLimit;
+        /* 0x94 */ float mGrabHeightLimit;
+        /* 0x98 */ float mOoccooJumpMaxSpeed;
+        /* 0x9C */ float mDiveSpeedV;
+        /* 0xA0 */ float mDiveSpeedH;
+        /* 0xA4 */ float mDiveGravity;
+        /* 0xA8 */ float mCuccoJumpMaxSpeed;
+        /* 0xAC */ float mCuccoFallMaxSpeed;
+        /* 0xB0 */ float mCuccoStartSpeed;
+    } __attribute__((__packed__));  // size = 0xB4
+
+    class daAlinkHIO_autoJump_c0 {
+        public:
+        daAlinkHIO_autoJump_c1 const m;
+    } __attribute__((__packed__));
 
     struct WallMoveVars
     {
@@ -1079,14 +1591,14 @@ namespace libtp::tp::d_a_alink
         /* 0x00 */ daAlinkHIO_anm_c mShakeAnm;
         /* 0x14 */ daAlinkHIO_anm_c mBeginUnkAnm;
         /* 0x28 */ daAlinkHIO_anm_c mEndUnkAnm;
-        /* 0x3C */ uint16_t innerSphereR;
-        /* 0x3E */ uint16_t innerSphereG;
-        /* 0x40 */ uint16_t innerSphereB;
-        /* 0x42 */ uint16_t outerSphereR;
-        /* 0x44 */ uint16_t outerSphereG;
-        /* 0x46 */ uint16_t outerSphereB;
-        /* 0x48 */ uint16_t mNormalOilLoss;
-        /* 0x4A */ uint16_t mShakeOilLoss;
+        /* 0x3C */ int16_t innerSphereR;
+        /* 0x3E */ int16_t innerSphereG;
+        /* 0x40 */ int16_t innerSphereB;
+        /* 0x42 */ int16_t outerSphereR;
+        /* 0x44 */ int16_t outerSphereG;
+        /* 0x46 */ int16_t outerSphereB;
+        /* 0x48 */ int16_t mNormalOilLoss;
+        /* 0x4A */ int16_t mShakeOilLoss;
         /* 0x4C */ float mFlameTrackRate;
 
     } __attribute__((__packed__));
@@ -1099,6 +1611,31 @@ namespace libtp::tp::d_a_alink
 
     } __attribute__((__packed__));
 
+struct daAlinkHIO_bow_c0 {
+    /* 0x00 */ daAlinkHIO_anm_c mShootAnm;
+    /* 0x14 */ daAlinkHIO_anm_c mLoadAnm;
+    /* 0x28 */ int16_t mChargeArrowTime;
+    /* 0x2A */ int16_t mBombArrowHoldTime;
+    /* 0x2C */ int16_t mBombArrowFlyExplodeTime;
+    /* 0x2E */ uint8_t padding_0x2e[2];
+    /* 0x30 */ float mStartInterpolation;
+    /* 0x34 */ float mArrowSpeed;
+    /* 0x38 */ float mArrowDistance;
+    /* 0x3C */ float mChargeArrowSpeed;
+    /* 0x40 */ float mChargeArrowDistance;
+    /* 0x44 */ float mArrowAttackRadius;
+    /* 0x48 */ float mBombArrowSpeed;
+    /* 0x4C */ float mBombArrowDistance;
+    /* 0x50 */ float mChargeBombArrowSpeed;
+    /* 0x54 */ float mChargeBombArrowDistance;
+    /* 0x58 */ float mScopeArrowSpeed;
+    /* 0x5C */ float mScopeArrowDistance;
+    /* 0x60 */ float mArrowIncAttackMaxStart;
+    /* 0x64 */ float mArrowIncAttackMax;
+    /* 0x68 */ float mSlingshotSpeed;
+    /* 0x6C */ float mSlingshotDistance;
+} __attribute__((__packed__));
+
 #ifndef PLATFORM_WII
     static_assert(sizeof(daAlink) == 0x385C);
 #else
@@ -1110,6 +1647,7 @@ namespace libtp::tp::d_a_alink
     static_assert(sizeof(WallMoveVars) == 0x14);
     static_assert(sizeof(daAlinkHIO_huLight_c0) == 0x1C);
     static_assert(sizeof(daAlinkHIO_anm_c) == 0x14);
+    static_assert(sizeof(daAlinkHIO_basic_c1) == 0x58);
 
     /**
      *	@brief These values contain the values for Link's state
@@ -1122,8 +1660,23 @@ namespace libtp::tp::d_a_alink
         uint8_t status;
     } __attribute__((__packed__));
 
+
     extern "C"
     {
+
+        
+        /**
+         * @brief used for animation related activities
+         * 
+         * @param linkActrPtr A pointer to Link's Actor
+        */
+        daAlink_BckData* getMainBckData(daAlink* linkActrPtr, libtp::tp::d_a_alink::daAlink_ANM);
+
+        extern daAlink_AnmData m_anmDataTable[414];
+
+        daAlink_AnmData* getAnmData(daAlink_ANM anmID);
+        int32_t checkCopyRodTopUse(daAlink* linkActrPtr);
+
         /**
          *	@brief Checks if the specified stage is equal to the current stage.
          *
@@ -1136,6 +1689,10 @@ namespace libtp::tp::d_a_alink
          */
         void setStickData();
 
+        void setGrabUpperAnime(daAlink* linkActrPtr, float value);
+
+        void setGrabItemActor(daAlink* linkActrPtr, libtp::tp::f_op_actor::fopAc_ac_c* id);
+
         /**
          *	@brief Determines whether Link is in heavy state (Iron boots, Ball and
          *Chain, ...)
@@ -1143,6 +1700,70 @@ namespace libtp::tp::d_a_alink
          *	@return Bool returns True if Link is in a heavy state, otherwise returns False.
          */
         bool checkHeavyStateOn(int32_t unk1, int32_t unk2);
+
+        uint32_t checkModeFlg(daAlink* linkActrPtr, uint32_t pflag);
+
+        void onModeFlg(daAlink* linkActrPtr, uint32_t flag);
+        void offModeFlg(daAlink* linkActrPtr, uint32_t flag);
+
+        int32_t setSingleAnime(daAlink* linkActrPtr, daAlink_ANM anmID, float rate, float start, int16_t endF, float morf);
+        void setSingleAnimeBaseSpeed(daAlink* linkActrPtr, daAlink_ANM anmID, float speed, float morf);
+        int32_t setSingleAnimeParam(daAlink* linkActrPtr, daAlink_ANM i_anmID, daAlinkHIO_anm_c const* i_anmData);
+        void makeArrow(daAlink* linkActrPtr);
+        void deleteArrow(daAlink* linkActrPtr);
+        int32_t procBowSubjectInit(daAlink* linkActrPtr);
+        void itemUnequip(daAlink*, uint16_t item, float playSpeed);
+        int32_t procBoomerangSubject(daAlink* linkActrPtr);
+        int32_t procBoomerangMoveInit(daAlink* linkActrPtr);
+        void throwBoomerang(daAlink* linkActrPtr);
+        int32_t checkBoomerangLockAccept(daAlink* linkActrPtr);
+        void setBoomerangSight(daAlink* linkActrPtr);
+        int32_t initHookshotUpperAnimeSpeed(daAlink* linkActrPtr, int32_t smthg);
+        int32_t procHookshotMoveInit(daAlink* linkActrPtr);
+        void setHookshotPos(daAlink* linkActrPtr);
+        void setHookshotTopPosFly(daAlink* linkActrPtr);
+        int32_t procSwimHookshotSubjectInit(daAlink* linkActrPtr);
+        void throwCopyRod(daAlink* linkActrPtr);
+        int32_t returnCopyRod(libtp::tp::d_a_alink::daAlink* linkActrPtr);
+        f_op_actor::fopAc_ac_c* getCopyRodControllActor(daAlink* inkAxtrPtr);
+        int32_t procCopyRodSwingInit(daAlink* linkActrPtr);
+        int32_t procCopyRodSwing(daAlink* linkActrPtr);
+        int32_t checkNextActionCopyRod(daAlink* linkActrPtr);
+        void setCopyRodControllAnime(daAlink* linkActrPtr);
+        int32_t procIronBallThrowInit(daAlink* linkActrPtr);
+        int32_t checkUpperItemActionIronBall(daAlink* linkActrPtr);
+        int32_t checkNextAction(daAlink* linkActrPtr, int32_t aaa);
+        int32_t setBodyAngleToCamera(daAlink* linkActrPtr);
+        int32_t checkItemActorPointer(daAlink* linkActrPtr);
+        libtp::tp::f_op_actor::fopAc_ac_c* LockOnTarget(void* attention, int32_t id);
+        int32_t checkUpperItemActionBoomerang(daAlink* linkActrPtr);
+        void cancelBoomerangLock(daAlink* linkActrPtr, libtp::tp::f_op_actor::fopAc_ac_c* i_actor);
+        int32_t checkBoomerangCarry(daAlink* linkActrPtr, libtp::tp::f_op_actor::fopAc_ac_c* i_actor);
+        bool checkUpperAnime(daAlink* linkActrPtr, uint16_t idx);
+        int32_t checkBoomerangReadyAnime(daAlink* linkActrPtr);
+        int32_t checkBoomerangThrowAnime(daAlink* linkActrPtr);
+        int32_t procHookshotRoofWait(daAlink* linkActrPtr);
+        int32_t procFallInit(daAlink* linkActrPtr, int32_t a1, float a2);
+        int32_t execute_(daAlink* linkActrPtr);
+        int32_t setDamagePoint(daAlink* linkActrPtr, int32_t a1, int32_t a2, int32_t a3, int32_t a4);
+        void seStartOnlyReverb(daAlink* linkActrPtr, uint32_t a1);
+        void setMagicArmorBrk(daAlink* linkActrPtr, int32_t a1);
+        void changeLink(daAlink* linkActrPtr, int32_t param_0);
+        int32_t procSmallJumpInit(daAlink* linkAcrPtr, int32_t param_0);
+        void setDemoBodyBck(daAlink* linkActrPtr, void* param_0, uint16_t param_1);
+        int32_t procCoWarpInit(daAlink* linkActrPtr, int32_t param0, int32_t param1);
+        int32_t procCoWarp(daAlink* linkActrPtr);
+        void dungeonReturnWarp(daAlink* linkActrPtr);
+        void kantera_iconDraw(void);
+
+        /**
+         * @brief Checks if the player is holding Cucco.
+         * 
+         * @param linkActrPtr A pointer to Link's Actor
+         * 
+         * @return int32_t unknown
+        */
+        int32_t checkGrabRooster(daAlink* linkActrPtr);
 
         /**
          *	@brief Initializes the animation that causes Link to transform.
@@ -1162,6 +1783,28 @@ namespace libtp::tp::d_a_alink
          * @return int32_t unknown.
         */
         int32_t procAutoJumpInit(daAlink* linkActrPtr, int32_t param_1);
+
+        /**
+         * @brief Initializes Dive animation.
+         * 
+         * @param linkActrPtr A pointer to Link's Actor
+         * 
+         * @return int32_t returns 0 if the Dive animation doesn't play, returns 1 if it does.
+        */
+        int32_t procDiveJumpInit(daAlink* linkActrPtr);
+
+        /**
+         * @brief Checks if the current PROC playing is not the same as the one selected here.
+         * 
+         * @param linkActrPtr A pointer to Link's Actor
+         * 
+         * @param procID the PROC that's selected
+         * 
+         * @return int32_t unknown
+        */
+        int32_t commonProcInitNotSameProc(daAlink* linkActrPtr, daAlink_PROC procID);
+
+        void commonProcInit(daAlink* linkActrPtr, daAlink_PROC procID);
 
         /**
          *	@brief Checks whether a chest-rupee doesn't fit in Link's wallet.
@@ -1226,6 +1869,8 @@ namespace libtp::tp::d_a_alink
          *  @return Bool returns True if Link is riding on the Spinner, otherwise returns False.
          */
         bool checkSpinnerRide(daAlink* linkActrPtr);
+
+        bool checkSpinnerTriggerAttack(daAlink* linkActrPtr);
 
         /**
          *  @brief Initializes the process used when delivering the final blow to Ganondorf.
@@ -1292,6 +1937,33 @@ namespace libtp::tp::d_a_alink
          *  @return Bool returns True if Link successfully took damage, otherwise returns False.
          */
         bool procDamageInit(daAlink* linkActrPtr, void* obj, int32_t unk3);
+
+        /**
+         * @brief Checks if Link is in guarding state.
+         * 
+         * @param linkActrPtrA pointer to Link's Actor
+         * 
+         * @return unknown
+        */
+        int32_t checkUpperGuardAnime(daAlink* linkActrPtr);
+
+        /**
+         * @brief Sets a specific item for Link to hold.
+         * 
+         * @param linkActrPtr A pointer to Link's Actor
+         * 
+         * @return Bool unknown.
+        */
+        bool setItemActor(daAlink* linkActrPtr);
+
+        /**
+         * @brief something.
+         * 
+         * @param linkActrPtr A pointer to Link's Actor.
+         * 
+         * @return Bool unknown.
+        */
+        bool checkReadyItem(daAlink* linkActrPtr);
 
         /**
          *  @brief Causes Wolf Link to take damage based on his interaction with certain things.
@@ -1361,6 +2033,8 @@ namespace libtp::tp::d_a_alink
         */
        void setClothesChange(daAlink* linkActrPtr, int32_t param_1);
 
+       int32_t procHookshotFlyInit(daAlink* linkActrPtr);
+
         /**
          *  @brief Checks to see if Link is currently voiding out.
          *
@@ -1410,6 +2084,13 @@ namespace libtp::tp::d_a_alink
         float damageMagnification(daAlink* linkActrPtr, int32_t param_1, int32_t param_2);
 
         /**
+         * @brief Makes Link take out the shield.
+         * 
+         * @param linkActrPtr A pointer to Link's Actor
+        */
+        void setShieldGuard(daAlink* linkActrPtr);
+
+        /**
          *  @brief Checks to see if Link can use an item
          *
          *  @param item_id  id of the item
@@ -1444,6 +2125,9 @@ namespace libtp::tp::d_a_alink
         extern daAlinkHIO_kandelaar_c0 lanternVars;
         extern daAlinkHIO_magneBoots_c0 ironBootsVars;
         extern daAlinkHIO_huLight_c0 huLightVars;
+        extern daAlinkHIO_basic_c0 something;
+        extern daAlinkHIO_autoJump_c0 jumpStuff;
+        extern daAlinkHIO_bow_c0 bowVars;
     }
 } // namespace libtp::tp::d_a_alink
 #endif

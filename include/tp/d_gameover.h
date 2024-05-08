@@ -2,6 +2,7 @@
  *	@brief Holds data and definitions related to the Game Over part of the game.
  *
  *  @author Lunar Soap
+ *  @author Captain Kitty Cat
  *	@bug No known bugs.
  */
 #ifndef TP_D_GAMEOVER_H
@@ -36,6 +37,12 @@ namespace libtp::tp::d_gameover
          *  @param ptr The pointer to the dGameOver struct.
          */
         void dispWait_init(dGameOver* ptr);
+
+        void saveMove_proc(dGameOver* ptr);
+
+        void playerAnmWait_Init(dGameOver* ptr);
+
+        void deleteWait_init(dGameOver* ptr);
     }
 } // namespace libtp::tp::d_gameover
 #endif
